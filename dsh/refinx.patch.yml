@@ -1,0 +1,114 @@
+- id: llm-pi-ai
+  config:
+    providers:
+      refinx:
+        api: openai-completions
+        baseURL: !!js process.env.REFINX_LLM_BASE_URL
+        apiKeyEnv: REFINX_LLM_API_KEY
+        defaultMaxTokens: 8192   
+        timeoutMs: 90000         
+        models:
+          - id: !!js process.env.REFINX_AGENT_MODEL
+            contextWindow: 131072  
+- id: agent-default-model
+  config:
+    provider: refinx
+    model: !!js process.env.REFINX_AGENT_MODEL
+
+
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    includeRuntimeContext: false
+    personaSuffix: ''
+    personaPrefix: !!js |-
+      `You are a financial research agent. The information cutoff is ${process.env.REFINX_AS_OF} (UTC): treat anything after it as unknown and do not rely on knowledge of later events.
+      Use the tools when you need facts, market data or calculations:
+      - mcp__refinx__search_web: web search limited to pages dated on or before the cutoff. Snippets are short summaries, not full documents.
+      - mcp__refinx__get_price_history: forward-adjusted (前复权) daily prices of Shanghai/Shenzhen A-shares, only for trading days completed before the cutoff.
+      - mcp__refinx__get_financial_statements: A-share income, balance sheet and cash flow statements from filings published on or before the cutoff. Quarterly figures are year-to-date cumulative.
+      - mcp__refinx__calculate: evaluate an arithmetic expression exactly.
+      If the question lacks information needed to answer it reliably, ask the user for the specific missing information instead of guessing; you may add conditional answers for the plausible cases.
+      When you are done, reply with your final answer in the same language as the user's question, without calling tools. State the evidence and calculations your conclusions rely on.`
+
+
+
+
+- insert:
+    - id: mcp-refinx
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: refinx
+        transport: stdio
+        command: !!js process.env.REFINX_PYTHON
+        args: ['-m', 'refinx.mcp_server']
+        cwd: !!js process.env.REFINX_ROOT
+        toolCallTimeoutMs: 90000
+        failOnStartupError: true
+        reconnect: {enabled: false}
+        env:
+          REFINX_AS_OF: !!js process.env.REFINX_AS_OF
+          REFINX_LANGUAGE: !!js process.env.REFINX_LANGUAGE
+          REFINX_TOOL_LOG: !!js process.env.REFINX_TOOL_LOG
+          REFINX_SEARCH: !!js process.env.REFINX_SEARCH ?? ''
+          REFINX_SEARCH_URL: !!js process.env.REFINX_SEARCH_URL ?? ''
+          REFINX_SEARCH_HEADERS: !!js process.env.REFINX_SEARCH_HEADERS ?? ''
+          REFINX_SEARCH_BODY: !!js process.env.REFINX_SEARCH_BODY ?? ''
+          REFINX_MARKET_DATA_URL: !!js process.env.REFINX_MARKET_DATA_URL ?? ''
+          REFINX_MARKET_DATA_KEY: !!js process.env.REFINX_MARKET_DATA_KEY ?? ''
+          BRAVE_API_KEY: !!js process.env.BRAVE_API_KEY ?? ''
+          REFINX_KEY_DIR: !!js process.env.REFINX_KEY_DIR ?? ''
+          REFINX_PINNED_HOSTS: !!js process.env.REFINX_PINNED_HOSTS ?? ''
+          NO_PROXY: !!js process.env.NO_PROXY ?? ''
+          no_proxy: !!js process.env.no_proxy ?? ''
+    - id: refinx-limits
+      name: ./refinx-limits.js
+
+
+- {id: tool-pwsh, disabled: true}
+- {id: tool-bash, disabled: true}
+- {id: tool-jobs, disabled: true}
+- {id: tool-fs, disabled: true}
+- {id: tool-fs-search, disabled: true}
+- {id: tool-skill, disabled: true}
+- {id: skill, disabled: true}
+- {id: skill-filesystem, disabled: true}
+- {id: tool-todo, disabled: true}
+- {id: tool-goal, disabled: true}
+- {id: goal, disabled: true}
+- {id: goal-round-driver, disabled: true}
+- {id: command-goal, disabled: true}
+- {id: plan-mode, disabled: true}
+- {id: user-questions, disabled: true}
+- {id: subagent, disabled: true}
+- {id: subagent-spawn-in-process, disabled: true}
+- {id: subagent-fork-in-process, disabled: true}
+- {id: tool-subagent-control, disabled: true}
+- {id: tool-subagent-list-agents, disabled: true}
+- {id: tool-subagent, disabled: true}
+- {id: tool-subagent-fork, disabled: true}
+- {id: ptc-runtime, disabled: true}
+- {id: workflow-ptc, disabled: true}
+- {id: tool-workflow, disabled: true}
+- {id: mcp-resources, disabled: true}
+
+
+- {id: web, disabled: true}
+- {id: web-search-deepseek, disabled: true}
+- {id: web-fetch-http, disabled: true}
+- {id: tool-web, disabled: true}
+
+
+
+- {id: agent-instructions, disabled: true}
+- {id: compaction-basic, disabled: true}
+- {id: command-compact, disabled: true}
+- {id: tool-result-pruner, disabled: true}
+- {id: image-offload, disabled: true}
+- {id: spill-policy, disabled: true}
+- {id: repeat-tool-reminder, disabled: true}
+
+
+- {id: session-title-llm, disabled: true}
+- {id: otel, disabled: true}
+- {id: session-telemetry-otel, disabled: true}

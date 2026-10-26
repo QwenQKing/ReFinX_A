@@ -1,0 +1,10 @@
+runs/
+paper/public-data/
+
+.env
+key*.md
+*.key
+
+__pycache__/
+*.pyc
+.pytest_cache/

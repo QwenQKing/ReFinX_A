@@ -1,0 +1,18 @@
+- id: llm-pi-ai
+  config:
+    providers:
+      refinx:
+        api: openai-completions
+        baseURL: !!js process.env.REFINX_LLM_BASE_URL
+        apiKeyEnv: REFINX_LLM_API_KEY
+        defaultMaxTokens: 8192   
+        timeoutMs: 90000         
+        reasoning: "off"
+        models:
+          - id: !!js process.env.REFINX_AGENT_MODEL
+            
+            
+            contextWindow: 262144
+            reasoningEfforts:
+              "off": !!js process.env.REFINX_REASONING_OFF || null
+              low: low
