@@ -170,13 +170,3 @@ export PATH="$HOME/.refinx-node/global/bin:$PATH"
 
 Node.js 25.9.0 must be on `PATH`. Installing DSH requires network access to npm. The installer pins DSH itself; `vendor/dsh/packages.tsv` records the dependency versions used in the experiments, while a new npm installation may resolve different transitive dependency versions. The chat templates in `serve/` are derived from the corresponding models' templates; the GLM and Step templates prefill an empty thinking block.
 
-## Sources and reuse
-
-The records omit a per-record license field. This does not remove the original authors' rights or source-specific conditions. No blanket dataset license is granted. Reference answers and annotations are derived from the source queries, so the same source-specific conditions apply to them.
-
-- Stack Exchange Finance Communities: original posts and author attribution are accessible through `source_url`. Source records identify CC BY-SA 2.5, 3.0, or 4.0; some records leave the version unverified. Consult each original post and its revision history for the applicable license and attribution. See https://stackoverflow.com/help/licensing and https://creativecommons.org/licenses/by-sa/4.0/ .
-- CNINFO: public investor communications; applicable CNINFO terms require verification before reuse.
-- Manifold Finance, Polymarket Finance, Alpaca Forum, and GitHub Finance: source-specific terms require verification before redistribution or reuse. An accessible URL does not itself establish redistribution permission.
-- Query rewrites: derived queries; underlying source terms require verification before redistribution or reuse.
-
-Source permission verification is not represented as complete. This repository is a research artifact, not a certification of annotation accuracy, evaluation completion, or unrestricted reuse rights.
